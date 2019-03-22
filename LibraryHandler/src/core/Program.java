@@ -1,6 +1,7 @@
 package core;
 
 import controllers.MainController;
+import iohandlers.ConsoleReader;
 
 public class Program {
 

@@ -3,6 +3,14 @@ package iohandlers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 
 public class ConsoleReader {
 	
@@ -20,9 +28,9 @@ public class ConsoleReader {
 				ok = true;
 			} catch (Exception e) {
 				// TODO: handle exception
-				System.err.println("Invalid input, input was not an Integer");
+				System.out.println("Invalid input, input was not an Integer");
 			}
-		} while (ok);
+		} while (!ok);
 		return number;
 	}
 	
@@ -31,16 +39,16 @@ public class ConsoleReader {
 	public static int readIntInRange(int floor, int ceiling) { 
 		
 		int number = 0;
-		boolean unsuccessful = true;
+		boolean ok = false;
 		
 		do {
 			
 				number = readInt();
 				if(number <= ceiling && number >= floor)
-					unsuccessful = false;
+					ok = true;
 				else System.out.println("Invalid input, Integer was not in the required range");
 				
-		} while (unsuccessful);
+		} while (!ok);
 		return number;
 	}
 	
@@ -74,8 +82,47 @@ public class ConsoleReader {
 				System.out.println("Input is longer than what is required");
 			}
 				
-		} while (ok);
+		} while (!ok);
 		
 		return returnValue;
+	}
+	
+	public static String readStringBetweenLength(int minlength, int maxLength) {
+		String returnValue = "";
+		boolean ok = false;
+		
+		do {
+			returnValue = readString();
+			
+			if(returnValue.length() <= maxLength && returnValue.length() >= minlength) {
+				ok = true;
+			}
+			else {
+				System.out.println("Input has to be between " + (minlength + 1) + " and " + (maxLength + 1) + "in length.");
+			}
+				
+		} while (!ok);
+		
+		return returnValue;
+	}
+	
+	//reads date in the yyyy.MM.dd format
+	public static Date readSQLDate() {
+		boolean ok = false;
+		Date ret = null;
+		do {
+			try {	
+				System.out.println("Dátum formátum: yyyy.mm.dd\n");
+				String toConvert = readString();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+				LocalDate date = LocalDate.parse(toConvert, formatter);
+				ret = new Date(date.atStartOfDay().toInstant(ZoneOffset.MIN).toEpochMilli());
+				ok = true;
+				
+			} catch(DateTimeParseException e) {
+				System.out.println("A beírt dátum nem megfelelõ formátumú!");
+			}
+		}while(!ok);
+		return ret;
 	}
 }

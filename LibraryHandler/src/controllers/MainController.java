@@ -26,8 +26,10 @@ public class MainController {
 	
 	public static void operateInConsole(){
 		ConsoleView consoleView = new ConsoleView();
-		String[] loginDetails = consoleView.requestLoginDetails(); //loginDetails[0] is the username and loginDetails[1] is the password
+		//String[] loginDetails = consoleView.requestLoginDetails(); //loginDetails[0] is the username and loginDetails[1] is the password
+		String[] loginDetails = {"System", "Guest123"};
 		openConnection(loginDetails[0], loginDetails[1]);
+		consoleView.mainConsoleMenu();
 		
 	}
 	
@@ -43,6 +45,22 @@ public class MainController {
 	}
 	
 	public static void closeConnection() {
-		//TODO
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	//data loading methods
+	
+	//getters and setters
+	public static Connection getConnection() {
+		return connection;
+	}
+
+	public static void setConnection(Connection connection) {
+		MainController.connection = connection;
 	}
 }

@@ -17,6 +17,20 @@ public class Member {
 		this.phoneNumber = phoneNumber;
 		this.dateOfBirth = dateOfBirth;
 	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Tag adatai: " + memberIDCode + " " + name + " " + eMail + " "
+				+ phoneNumber + " " + dateOfBirth;
+	}
+
+
+
+	public Member() {
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getIdCode() {
 		return memberIDCode;

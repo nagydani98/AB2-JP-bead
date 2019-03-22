@@ -20,10 +20,10 @@ public class ConsoleView {
 		String[] loginDetails = new String[2];
 		boolean ok = false;
 		do {
-			System.out.println("Please provide your username:");
+			System.out.println("Add meg a felhasználóneved:");
 			loginDetails[0] = ConsoleReader.readString();
 			if(loginDetails[0].isEmpty()) {
-				System.out.println("You did not provide a username, please try again!");
+				System.out.println("Nem adtál meg felhasználónevet!");
 			}
 			
 		}while(ok);
@@ -31,16 +31,52 @@ public class ConsoleView {
 		ok=false;
 		do {
 
-			System.out.println("Please provide your password:");
+			System.out.println("Add meg a jelszavad");
 			loginDetails[1] = ConsoleReader.readString();
 			
 			if(loginDetails[1].isEmpty()) {
-				System.out.println("You did not provide a username, please try again!");
+				System.out.println("Nem adtál meg jelszót!");
 			}
 			
 		}while(ok);
 		
 		//System.out.println(loginDetails[0] + loginDetails[1]);
 		return loginDetails;
+	}
+	
+	//menu methods
+	public void mainConsoleMenu() {
+		boolean exit = false;
+		do {
+		System.out.println("A menürendszert a megfelelõ szám bevitelével navigálhatod:");
+		System.out.println("1. Tagok\n2. Könyvek\n3. Kölcsönzések\n4. Beállítások\n5. Kilépés");
+		
+		int menu = ConsoleReader.readIntInRange(1, 5);
+		
+		switch (menu) {
+		case 1:
+			memberView.memberConsoleMenu();
+			break;
+
+		case 2:
+			
+			break;
+
+		case 3:
+	
+			break;
+
+		case 4:
+	
+			break;
+
+		case 5:
+			exit = true;
+			break;
+
+		default:
+			break;
+		}
+		}while(!exit);
 	}
 }
