@@ -1,9 +1,13 @@
 package views;
 
 import java.sql.Date;
+import java.util.ArrayList;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import controllers.MemberController;
 import iohandlers.ConsoleReader;
+import iohandlers.TextFileHandler;
 import models.Member;
 
 public class MemberView {
@@ -78,7 +82,7 @@ public class MemberView {
 				enterNewMember();
 				break;
 			case 5:
-				
+				importExportMemberMenu();
 				break;
 				
 			case 6:
@@ -150,19 +154,53 @@ public class MemberView {
 		"2. Importálás XML fájlból\n"+
 		"3. Importálás JSON fájlból\n"+
 		"4. Importálás szöveg fájlból, megadott oszlop elválasztó karakterrel\n"+
-		"5. Exportálás CSV fájlba"+
-		"6. Exportálás XML fájlba"+
-		"7. Exportálás JSON fájlba"+
-		"8. Exportálás szöveg fájlba, megadott oszlop elválaasztó karakterrel"+
-		"9. Vissza"); 
+		"5. Exportálás CSV fájlba\n"+
+		"6. Exportálás XML fájlba\n"+
+		"7. Exportálás JSON fájlba\n"+
+		"8. Exportálás szöveg fájlba, megadott oszlop elválaasztó karakterrel\n"+
+		"9. Vissza\n"); 
 		
 		int choice = ConsoleReader.readIntInRange(1, 9);
 		
 		switch (choice) {
 		case 1:
+			System.out.println("Írd be az importálandó fájl nevét, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis\" vagy \"C:\\Mappanev\\adatbazis\"");
+			String csvImportPath = ConsoleReader.readString();
+			csvImportPath+=".csv";
+			
+			if(MemberController.getLoadedMembers().isEmpty()) {
+				memberController.loadMemberDataFromDB();
+			}
+			
+			ArrayList<String> read = TextFileHandler.loadTxtFile(csvImportPath);
+			for (String string : read) {
+				Member mem = Member.memberFromCSVString(string);
+				boolean alreadyExists = false;
+				
+				for (Member member : MemberController.getLoadedMembers()) {
+					if(member.getIdCode().equals(mem.getIdCode())) {
+						alreadyExists = true;
+					}
+				}
+				
+				if(!alreadyExists) {
+					MemberController.getLoadedMembers().add(mem);
+					memberController.insertMemberIntoDB(mem);
+				}
+				else {
+					System.out.println("A következõ kódú tag már be van töltve:" + mem.getIdCode());
+				}
+				
+			}
+			
 			
 		case 2:
-			
+			System.out.println("Írd be az importálandó fájl nevét, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis\" vagy \"C:\\Mappanev\\adatbazis\"");
+			String xmlImportPath = ConsoleReader.readString();
+			xmlImportPath+=".xml";
+			memberController.loadMembersFromXML(xmlImportPath);
 			break;
 
 		case 3:
@@ -170,21 +208,84 @@ public class MemberView {
 			break;
 
 		case 4:
+			System.out.println("Írd be az importálandó fájl nevét és kiterjesztését, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis.txt\" vagy \"C:\\Mappanev\\adatbazis.txt\"");
+			String importPath = ConsoleReader.readString();
 			
+			System.out.println("Írd be a fájlban az adatokat, vagy oszlopokat elválasztó karaktert:");
+			String delimiter = ConsoleReader.readString();
+			
+			if(MemberController.getLoadedMembers().isEmpty()) {
+				memberController.loadMemberDataFromDB();
+			}
+			
+			ArrayList<String> readline = TextFileHandler.loadTxtFile(importPath);
+			for (String string : readline) {
+				Member mem = Member.memberFromFileString(string, delimiter);
+				
+				boolean alreadyExists = false;
+				
+				for (Member member : MemberController.getLoadedMembers()) {
+					if(member.getIdCode().equals(mem.getIdCode())) {
+						alreadyExists = true;
+					}
+				}
+				
+				if(!alreadyExists) {
+					MemberController.getLoadedMembers().add(mem);
+					memberController.insertMemberIntoDB(mem);
+				}
+				else {
+					System.out.println("A következõ kódú tag már be van töltve:" + mem.getIdCode());
+				}
+				
+			}
 			break;
 		case 5:
+			System.out.println("Írd be az írandó fájl nevét, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis\" vagy \"C:\\Mappanev\\adatbazis\"");
+			String csvExportPath = ConsoleReader.readString();
+			csvExportPath+=".csv";
 			
+			if(MemberController.getLoadedMembers().isEmpty()) {
+				memberController.loadMemberDataFromDB();
+			}
+			
+			ArrayList<String> csvLines = new ArrayList<>();
+			for (Member member : MemberController.getLoadedMembers()) {
+				csvLines.add(member.toCSVString());
+			}
+			TextFileHandler.writeTxtFile(csvLines, csvExportPath);
 			break;
 			
 		case 6:
+			System.out.println("Írd be az exportálandó fájl nevét, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis\" vagy \"C:\\Mappanev\\adatbazis\"");
+			String xmlExportPath = ConsoleReader.readString() + ".xml";
 			
+			memberController.saveMemberListToXML(xmlExportPath);
 			break;
 		case 7:
 			
 			break;
 		
 		case 8:
-	
+			System.out.println("Írd be az importálandó fájl nevét és kiterjesztését, "
+					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis.txt\" vagy \"C:\\Mappanev\\adatbazis.txt\"");
+			String exportPath = ConsoleReader.readString();
+			
+			System.out.println("Írd be a fájlban az adatokat, vagy oszlopokat elválasztó karaktert:");
+			String delimiterChars = ConsoleReader.readString();
+			
+			if(MemberController.getLoadedMembers().isEmpty()) {
+				memberController.loadMemberDataFromDB();
+			}
+			
+			ArrayList<String> fileLines = new ArrayList<>();
+			for (Member member : MemberController.getLoadedMembers()) {
+				fileLines.add(member.toFileString(delimiterChars) + "\n");
+			}
+			TextFileHandler.writeTxtFile(fileLines, exportPath);
 			break;
 
 		case 9:
@@ -194,7 +295,7 @@ public class MemberView {
 		default:
 			break;
 		}
-		}while(exit);
+		}while(!exit);
 	}
 	
 	public void enterNewMember() {

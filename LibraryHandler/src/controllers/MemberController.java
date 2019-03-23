@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import iohandlers.XMLParser;
 import models.Member;
 
 public class MemberController {
@@ -72,6 +76,57 @@ public class MemberController {
 
 	}
 
+	
+	//methods for xml operations
+	public void saveMemberListToXML(String path) {
+		if(MemberController.loadedMembers.isEmpty()) {
+			loadMemberDataFromDB();
+		}
+		Document doc = XMLParser.createDocument();
+		Member.convertAndAppendMembers(loadedMembers, doc);
+		XMLParser.saveDocument(doc, path);
+	}
+	
+	public void loadMembersFromXML(String path) {
+		ArrayList<Element> eList = XMLParser.parseDocument(path);
+		
+		ArrayList<Member> importedMemberList = Member.memberListFromElementList(eList);
+		
+		if(MemberController.loadedMembers.isEmpty()) {
+			loadMemberDataFromDB();
+		}
+		
+		//to avoid modifying the imported list of members as I am working on them in the loop, I am making a copy of them
+		ArrayList<Member> copyOfImportedMemberList = (ArrayList<Member>) importedMemberList.clone();
+		
+		//in these nested loops, I check whether a member from the imported list is already in the loaded members from the db
+		//this is a very inefficient way of doing so though
+		//i remove all already existing members from the copy of the imported member list
+		for (Member member : importedMemberList) {
+			for (Member loaded : loadedMembers) {
+				if(loaded.getIdCode().equals(member.getIdCode())) {
+					System.out.println("A következõ kódú tag már be van töltve:" + member.getIdCode());
+					copyOfImportedMemberList.remove(member);
+				}
+				else if(loaded.geteMail().equals(member.geteMail())) {
+					System.out.println("A kövektezõ E-Mail cím már regisztrálva van: " + member.geteMail());
+					copyOfImportedMemberList.remove(member);
+				}
+				else if(loaded.getPhoneNumber().equals(member.getPhoneNumber())) {
+					System.out.println("A kövektezõ telefonszám már regisztrálva van: " + member.getPhoneNumber());
+					copyOfImportedMemberList.remove(member);
+				}
+			}
+		}
+		
+		//all remaining members in the copy shouldn't be violating the unique constraints of the "Tagok" table, so they are safe to insert
+		for (Member member : copyOfImportedMemberList) {
+			System.out.println("Adatbázisba felvitt " + member.toString());
+			loadedMembers.add(member);
+			insertMemberIntoDB(member);
+		}
+	}
+	
 	public static ArrayList<Member> getLoadedMembers() {
 		return loadedMembers;
 	}
