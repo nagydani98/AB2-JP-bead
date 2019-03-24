@@ -49,9 +49,9 @@ public class ConsoleView {
 		boolean exit = false;
 		do {
 		System.out.println("A menürendszert a megfelelõ szám bevitelével navigálhatod:");
-		System.out.println("1. Tagok\n2. Könyvek\n3. Kölcsönzések\n4. Beállítások\n5. Kilépés");
+		System.out.println("1. Tagok\n2. Könyvek\n3. Kölcsönzések\n4. Szerzõk\n5. Beállítások\n6. Kilépés");
 		
-		int menu = ConsoleReader.readIntInRange(1, 5);
+		int menu = ConsoleReader.readIntInRange(1, 6);
 		
 		switch (menu) {
 		case 1:
@@ -59,7 +59,7 @@ public class ConsoleView {
 			break;
 
 		case 2:
-			
+			bookView.bookConsoleMenu();
 			break;
 
 		case 3:
@@ -69,8 +69,11 @@ public class ConsoleView {
 		case 4:
 	
 			break;
-
+			
 		case 5:
+			
+			break;
+		case 6:
 			exit = true;
 			break;
 

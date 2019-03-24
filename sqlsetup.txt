@@ -24,9 +24,13 @@ INSERT INTO Szerzo VALUES(2, 'Feket István');
 INSERT INTO Szerzo VALUES(3, 'Stephen King');
 INSERT INTO Szerzo VALUES(4, 'Albert Robaport');
 INSERT INTO Szerzo VALUES(5, 'Kriiai Réka');
+INSERT INTO Szerzo VALUES(6, 'Huszagi Béla');
 
 INSERT INTO Szerezte VALUES('111111111', 1);
 INSERT INTO Szerezte VALUES('111111112', 2);
 INSERT INTO Szerezte VALUES('111111113', 3);
 INSERT INTO Szerezte VALUES('111111114', 4);
 INSERT INTO Szerezte VALUES('111111115', 5);
+INSERT INTO Szerezte VALUES('111111115', 6);
+
+Select SzKod, Nev From Konyvek Natural Join (Select * From Szerezte Natural Join Szerzo) Where KKod = '111111115';

@@ -41,7 +41,7 @@ public class MemberView {
 				break;
 
 			case 2:
-				System.out.println("Írd be a kereset Tag nevét:");
+				System.out.println("Írd be a keresett Tag nevét:");
 				String searched = ConsoleReader.readString();
 				if(!searched.isEmpty()) {
 					if((MemberController.getLoadedMembers().isEmpty())) {
@@ -204,7 +204,7 @@ public class MemberView {
 			break;
 
 		case 3:
-			
+			System.out.println("Ebben a verzióban a JSON kezelés még nincs megvalósítva.");
 			break;
 
 		case 4:
@@ -266,11 +266,11 @@ public class MemberView {
 			memberController.saveMemberListToXML(xmlExportPath);
 			break;
 		case 7:
-			
+			System.out.println("Ebben a verzióban a JSON kezelés még nincs megvalósítva.");
 			break;
 		
 		case 8:
-			System.out.println("Írd be az importálandó fájl nevét és kiterjesztését, "
+			System.out.println("Írd be az írandó fájl nevét és kiterjesztését, "
 					+ "vagy az elérési útvonalát:\nPéldául: \"adatbazis.txt\" vagy \"C:\\Mappanev\\adatbazis.txt\"");
 			String exportPath = ConsoleReader.readString();
 			
