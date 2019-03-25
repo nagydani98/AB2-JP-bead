@@ -14,7 +14,7 @@ import models.Author;
 import models.Lend;
 
 public class LendController {
-	public static ArrayList<Lend> loadedLends;
+	private static ArrayList<Lend> loadedLends = new ArrayList<>();
 	private static Statement statement; 
 	private static String sqlStatement;
 	
@@ -27,7 +27,7 @@ public class LendController {
 			while(rs.next()) {
 				String memid = rs.getString("TKod");
 				String bookid = rs.getString("KKod");
-				Date start = rs.getDate("KivDatum ");
+				Date start = rs.getDate("KivDatum");
 				Date end = rs.getDate("LejDatum");
 				
 				Lend loaded = new Lend(memid, bookid, start, end);
@@ -107,4 +107,14 @@ public class LendController {
 			insertIntoIntoDB(lend);
 		}
 	}
+
+	public static ArrayList<Lend> getLoadedLends() {
+		return loadedLends;
+	}
+
+	public static void setLoadedLends(ArrayList<Lend> loadedLends) {
+		LendController.loadedLends = loadedLends;
+	}
+	
+	
 }

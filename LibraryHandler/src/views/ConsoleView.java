@@ -63,15 +63,15 @@ public class ConsoleView {
 			break;
 
 		case 3:
-	
+			lendView.lendConsoleMenu();
 			break;
 
 		case 4:
-	
+			authorView.authorConsoleMenu();
 			break;
 			
 		case 5:
-			
+			System.out.println("Ebben a verzióban a beállítások még nem elérhetõk!");
 			break;
 		case 6:
 			exit = true;

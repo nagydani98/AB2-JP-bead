@@ -14,14 +14,14 @@ import models.Author;
 import models.Book;
 
 public class AuthorController {
-	public static ArrayList<Author> loadedAuthors;
+	public static ArrayList<Author> loadedAuthors = new ArrayList<>();
 	private static Statement statement; 
 	private static String sqlStatement;
 	
 	public void loadAuthorDataFromDB() {
 		try {
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Select * From Authors";
+			sqlStatement = "Select * From Szerzo";
 			ResultSet rs = statement.executeQuery(sqlStatement);
 			
 			while(rs.next()) {
@@ -39,7 +39,7 @@ public class AuthorController {
 	public void updateAuthorDataInDB(Author author) {
 		try {
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Update Szerzok Set Nev = '" + author.getName() + "' Where SzKod = " + author.getAuthorIDCode();
+			sqlStatement = "Update Szerzo Set Nev = '" + author.getName() + "' Where SzKod = " + author.getAuthorIDCode();
 			statement.executeUpdate(sqlStatement);
 			
 			MainController.getConnection().commit();
@@ -52,7 +52,7 @@ public class AuthorController {
 	public void insertAuthorIntoDB(Author author) {
 		try {
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Insert Into Szerzok Values (" + author.getAuthorIDCode() + ", '" + author.getName() + "')";
+			sqlStatement = "Insert Into Szerzo Values (" + author.getAuthorIDCode() + ", '" + author.getName() + "')";
 			statement.executeUpdate(sqlStatement);
 			
 			MainController.getConnection().commit();
@@ -93,7 +93,7 @@ public class AuthorController {
 			for (Author loaded : loadedAuthors) {
 				if(loaded.getAuthorIDCode() == author.getAuthorIDCode()) {
 					System.out.println("A következõ kódú szerzõ már be van töltve:" + author.getAuthorIDCode());
-					
+					copy.remove(loaded);
 				}
 			}
 		}

@@ -42,30 +42,16 @@ public class AuthorView {
 				break;
 				 
 			case 2:
-				System.out.println("Írd be a keresett szerzõ nevét vagy kódját(egész szám):");
+				System.out.println("Írd be a keresett szerzõ nevét");
 				String searched = ConsoleReader.readString();
 				if(!searched.isEmpty()) {
 					if((AuthorController.getLoadedAuthors().isEmpty())) {
 						authorController.loadAuthorDataFromDB();
 					}
-					try {
-					if(Integer.valueOf(searched) != null) {
-						
-						for (Author author : AuthorController.getLoadedAuthors()) {
-							if(author.getAuthorIDCode() == Integer.parseInt(searched)) {
-								System.out.println("Keresett :" + author.toString());
-							}
+					for (Author author : AuthorController.getLoadedAuthors()) {
+						if(author.getName().contains(searched)) {
+							System.out.println("Keresett :" + author.toString());
 						}
-					}
-					else {
-						for (Author author : AuthorController.getLoadedAuthors()) {
-							if(author.getName().contains(searched)) {
-								System.out.println("Keresett :" + author.toString());
-							}
-						}
-					}
-					} catch(NumberFormatException e) {
-						System.out.println("A megadott szám nem megfelelõen volt beütve!");
 					}
 				}
 				break;
@@ -155,7 +141,7 @@ public class AuthorView {
 				}
 				
 			}
-			
+			break;
 			
 		case 2:
 			System.out.println("Írd be az importálandó fájl nevét, "
@@ -246,7 +232,7 @@ public class AuthorView {
 			
 			ArrayList<String> fileLines = new ArrayList<>();
 			for (Author auth : AuthorController.getLoadedAuthors()) {
-				fileLines.add(auth.toCSVString());
+				fileLines.add(auth.toFileString(delimiterChars));
 			}
 			TextFileHandler.writeTxtFile(fileLines, exportPath);
 			break;
@@ -261,12 +247,13 @@ public class AuthorView {
 	}
 	
 	public void modifyAuthorMenu(Author toModify) {
-		System.out.println("Írd be mit szeretnél tenni\n"
-				+ "1. Szerzõ név módosítása\n"
-				+ "2. Kilép");
-		int choice = ConsoleReader.readIntInRange(1, 2);
+		
 		boolean exit = false;
 		do {
+			System.out.println("Írd be mit szeretnél tenni\n"
+					+ "1. Szerzõ név módosítása\n"
+					+ "2. Kilép");
+			int choice = ConsoleReader.readIntInRange(1, 2);
 		switch (choice) {
 		case 1:
 			System.out.println("Add meg a szerzõ új nevét:");

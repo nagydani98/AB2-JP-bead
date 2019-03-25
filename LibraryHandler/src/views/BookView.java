@@ -146,11 +146,11 @@ public class BookView {
 	public void modifyBookAuthorMenu(Book toModify) {
 		boolean exit = false;
 		do {
-		System.out.println("Írd be mit szeretnél módosítani:"
+		System.out.println("Írd be mit szeretnél módosítani\n:"
 				+ "1. A könyv szerzõ hozzáadása\n"
 				+ "2. A könyv szerzõ törlése\n"
-				+ "3. Könyv szerzõ adatának módosítása(Belépés a szerzõk menübe)"
-				+ "4. Vissza");
+				+ "3. Könyv szerzõ adatának módosítása(Belépés a szerzõk menübe)\n"
+				+ "4. Vissza\n");
 		int choice = ConsoleReader.readIntInRange(1, 4);
 		
 		switch (choice) {
@@ -196,7 +196,7 @@ public class BookView {
 	}
 	
 	public void bookImportExportMenu() {
-boolean exit = false;
+		boolean exit = false;
 		
 		do {
 		System.out.println("1. Importálás CSV fájlból\n"+

@@ -61,7 +61,7 @@ public class Lend {
 		return ret;
 	}
 	
-	public static Lend lendFromFiletring(String line, String delimiter) {
+	public static Lend lendFromFileString(String line, String delimiter) {
 		Lend ret = new Lend();
 		String[] data = line.split(Pattern.quote(delimiter));
 		
