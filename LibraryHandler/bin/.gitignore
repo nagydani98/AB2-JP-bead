@@ -1,5 +1,5 @@
-/controllers/
-/views/
+/core/
 /iohandlers/
 /models/
-/core/
+/views/
+/controllers/

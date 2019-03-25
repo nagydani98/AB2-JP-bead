@@ -3,15 +3,18 @@ package views;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import controllers.AuthorController;
 import controllers.BookController;
 import controllers.MemberController;
 import iohandlers.ConsoleReader;
 import iohandlers.TextFileHandler;
+import models.Author;
 import models.Book;
 import models.Member;
 
 public class BookView {
 	private BookController bookController;
+	private AuthorView enterAuth = new AuthorView();
 	
 	public BookView() {
 		// TODO Auto-generated constructor stub
@@ -98,46 +101,39 @@ public class BookView {
 		
 		do {
 			System.out.println("Írd be melyik adatot szeretnéd módosítani:\n"
-			+ "1. Azonosító kód\n"
-			+ "2. Cím\n"
-			+ "3. Kiadási Dátum\n"
-			+ "4. Státusz\n"
-			+ "5. ISBN\n"
-			+ "6. Szerzõ(k) módosítása\n"
-			+ "7. Vissza");
+			+ "1. Cím\n"
+			+ "2. Kiadási Dátum\n"
+			+ "3. Státusz\n"
+			+ "4. ISBN\n"
+			+ "5. Szerzõ(k) módosítása\n"
+			+ "6. Vissza");
 			
-			int choice = ConsoleReader.readIntInRange(1, 7);
+			int choice = ConsoleReader.readIntInRange(1, 6);
 			switch (choice) {
 			case 1:
-				System.out.println("Add meg az új kódot:");
-				String id = ConsoleReader.readStringBetweenLength(5, 5);
-				toModify.setBookIDCode(id);
-				break;
-
-			case 2:
 				System.out.println("Add meg az új címet:");
 				String title = ConsoleReader.readString();
 				toModify.setTitle(title);
 				break;
-			case 3:
+			case 2:
 				System.out.println("Add meg az új kiadási dátumot:");
 				Date date = ConsoleReader.readSQLDate();
 				toModify.setDateOfRelease(date);
 				break;
-			case 4:
+			case 3:
 				System.out.println("Add meg az új státuszt (0 - selejt, 1 - szabad, 2 - kikölcsönzött):");
 				int status = ConsoleReader.readIntInRange(0, 2);
 				toModify.setStatus(status);
 				break;
-			case 5:
+			case 4:
 				System.out.println("Add meg az új ISBN számot:");
 				String isbn = ConsoleReader.readString();
 				toModify.setISBN(isbn);
 				break;
-			case 6:
-				modifyBookAuthorMenu();
+			case 5:
+				modifyBookAuthorMenu(toModify);
 			break;
-			case 7:
+			case 6:
 				exit=true;
 			break;
 			default:
@@ -147,10 +143,56 @@ public class BookView {
 		} while (!exit);
 	}
 	
-	public void modifyBookAuthorMenu() {
+	public void modifyBookAuthorMenu(Book toModify) {
+		boolean exit = false;
+		do {
 		System.out.println("Írd be mit szeretnél módosítani:"
-				+ ""
-				+ "Ez a menü sajnos még nem üzemképes ebben a verzióban!");
+				+ "1. A könyv szerzõ hozzáadása\n"
+				+ "2. A könyv szerzõ törlése\n"
+				+ "3. Könyv szerzõ adatának módosítása(Belépés a szerzõk menübe)"
+				+ "4. Vissza");
+		int choice = ConsoleReader.readIntInRange(1, 4);
+		
+		switch (choice) {
+		case 1:			
+			System.out.println("Írd be a könyv egy új szerzõjének az azonosító kódját:");
+			int newid = ConsoleReader.readInt();
+			if(AuthorController.getLoadedAuthors().isEmpty()) {
+				enterAuth.getAuthorController().loadAuthorDataFromDB();
+			}
+			
+			for (Author author : AuthorController.getLoadedAuthors()) {
+				if(author.getAuthorIDCode() == newid) {
+					toModify.getAuthors().add(author);
+				}
+			}
+			break;
+
+		case 2:			
+			System.out.println("Írd be a könyv egy törlendõ szerzõjének az azonosító kódját:");
+			int delid = ConsoleReader.readInt();
+			if(AuthorController.getLoadedAuthors().isEmpty()) {
+				enterAuth.getAuthorController().loadAuthorDataFromDB();
+			}
+			
+			for (Author author : AuthorController.getLoadedAuthors()) {
+				if(author.getAuthorIDCode() == delid) {
+					toModify.getAuthors().remove(author);
+				}
+			}
+			break;
+		case 3:			
+			enterAuth.authorConsoleMenu();
+			break;
+		case 4:			
+			exit = true;
+			break;
+		default:
+			break;
+		}
+		
+		}while(!exit);
+		
 	}
 	
 	public void bookImportExportMenu() {
@@ -316,17 +358,40 @@ boolean exit = false;
 		Date date = ConsoleReader.readSQLDate();
 		
 		System.out.println("Írd be az új könyv státuszát(0 - selejt, 1 - szabad, 2 - kikölcsönzött):");
-		String status = ConsoleReader.readString();
+		int status = ConsoleReader.readIntInRange(0, 2);
 		
 		System.out.println("Írd be az új tkönyv ISBN kódját:");
 		String isbn = ConsoleReader.readString();
 		
+		
 		System.out.println("Írd be hány szerzõje van az új könyvnek:");
 		int numOfAuthors = ConsoleReader.readInt();
+
+		ArrayList<Author> authors = new ArrayList<>();
+		
+		
 		for (int i = 0; i < numOfAuthors; i++) {
-			//TODO author reg
-			
+		
+		System.out.println(
+				"Írd be az új könyv szerzõjének azonosító kódját, vagy írj 0-t, hogy belépj a szerzõk menüjéba, ahol"
+				+ "\n megtekintheted a meglévõ szerzõket, vagy újat vehetsz fel, vagy importálhatsz");
+		int authID = ConsoleReader.readInt();
+		if(authID == 0) {
+			enterAuth.authorConsoleMenu();
+			System.out.println("Írd be az új könyv szerzõjének azonosító kódját:");
+			authID = ConsoleReader.readInt();
 		}
-		//TODO creat new book
+			if(AuthorController.getLoadedAuthors().isEmpty()) {
+				enterAuth.getAuthorController().loadAuthorDataFromDB();
+			}
+			
+			for(Author author : AuthorController.getLoadedAuthors()) {
+				if(author.getAuthorIDCode() == authID) {
+					authors.add(author);
+				}
+			}
+		}
+		Book book = new Book(id, title, status, isbn, date, authors);
+		bookController.insertBookIntoDB(book);
 	}
 }

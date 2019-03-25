@@ -64,12 +64,20 @@ public class BookController {
 		try {
 			System.out.println(book.toString());
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Update Konyvek Set KKod = '" + book.getBookIDCode() + "', Cim = '" + book.getTitle() +
+			sqlStatement = "Update Konyvek Set Cim = '" + book.getTitle() +
 					"', KiadasDatum = TO_DATE('"+ book.getDateOfRelease().toString() + "', 'YYYY.MM.DD'), Statusz = '" 
 					+ book.getStatus() + "', ISBN = " + book.getISBN() + " Where KKod = '" + book.getBookIDCode() + "'";
 			
-			System.out.println(sqlStatement);
 			statement.executeUpdate(sqlStatement);
+			
+			for (Author author : book.getAuthors()) {
+				sqlAuthorStatement = "Update Szerzo Set Nev='" + author.getName() + "' Where SzKod = " + author.getAuthorIDCode();
+				statement.executeUpdate(sqlAuthorStatement);
+				
+				String sqlauthored = "Update Szerezte Set SzKod = " + author.getAuthorIDCode() + "Where KKod = '" + book.getBookIDCode() 
+				+ "'";
+				statement.executeUpdate(sqlauthored);
+			}
 			
 			MainController.getConnection().commit();
 		} catch (Exception e) {

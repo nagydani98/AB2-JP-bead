@@ -14,60 +14,32 @@ import models.Author;
 import models.Book;
 
 public class AuthorController {
-	public static ArrayList<Book> loadedBooks = new ArrayList<>();
+	public static ArrayList<Author> loadedAuthors;
 	private static Statement statement; 
-	private static Statement authorStatement;
 	private static String sqlStatement;
-	private static String sqlAuthorStatement;
 	
-	public void loadBookDataFromDB() {
+	public void loadAuthorDataFromDB() {
 		try {
 			statement = MainController.getConnection().createStatement();
-			authorStatement = MainController.getConnection().createStatement();
-			sqlStatement = "Select * From Konyvek";
+			sqlStatement = "Select * From Authors";
 			ResultSet rs = statement.executeQuery(sqlStatement);
-			ResultSet rsAuthors;
 			
 			while(rs.next()) {
-				String id = rs.getString("KKod");
-				String title = rs.getString("Cim");
-				Date dateOfRelease = rs.getDate("KiadasDatum");
-				int status = rs.getInt("Statusz");
-				String isbn = rs.getString("ISBN");
-				ArrayList<Author> authorList = new ArrayList<>();
-				
-				sqlAuthorStatement = "Select SzKod, Nev From Konyvek Natural Join (Select * From Szerezte Natural Join Szerzo) Where KKod ='"
-						+ id + "'";
-				rsAuthors = authorStatement.executeQuery(sqlAuthorStatement);
-				
-				while(rsAuthors.next()) {
-					int aid = rsAuthors.getInt("SzKod");
-					String name = rsAuthors.getString("Nev");
-					
-					authorList.add(new Author(name, aid));
-				}
-				
-				
-				Book book = new Book(id, title, status, isbn, dateOfRelease, authorList);
-				loadedBooks.add(book);
-				
-				
+				String id = rs.getString("SzKod");
+				String name = rs.getString("Nev");
+				Author author = new Author(name, Integer.parseInt(id));
+				loadedAuthors.add(author);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | NumberFormatException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
 	}
 	
-	public void updateBookDataInDB(Book book) {
+	public void updateAuthorDataInDB(Author author) {
 		try {
-			System.out.println(book.toString());
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Update Konyvek Set KKod = '" + book.getBookIDCode() + "', Cim = '" + book.getTitle() +
-					"', KiadasDatum = TO_DATE('"+ book.getDateOfRelease().toString() + "', 'YYYY.MM.DD'), Statusz = '" 
-					+ book.getStatus() + "', ISBN = " + book.getISBN() + " Where KKod = '" + book.getBookIDCode() + "'";
-			
-			System.out.println(sqlStatement);
+			sqlStatement = "Update Szerzok Set Nev = '" + author.getName() + "' Where SzKod = " + author.getAuthorIDCode();
 			statement.executeUpdate(sqlStatement);
 			
 			MainController.getConnection().commit();
@@ -77,21 +49,12 @@ public class AuthorController {
 		}
 	}
 	
-	public void insertBookIntoDB(Book book) {
+	public void insertAuthorIntoDB(Author author) {
 		try {
 			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Insert Into Konyvek Values ('"+ book.getBookIDCode() +
-					"', '" + book.getTitle() +"', TO_DATE('" + book.getDateOfRelease().toString() + "', 'YYYY.MM.DD'),"
-							+ " '" + book.getStatus() + "', '" + book.getISBN() + "')";
+			sqlStatement = "Insert Into Szerzok Values (" + author.getAuthorIDCode() + ", '" + author.getName() + "')";
 			statement.executeUpdate(sqlStatement);
 			
-			for (Author author : book.getAuthors()) {
-				sqlAuthorStatement = "Insert Into Szerzo Values(" + author.getAuthorIDCode() + ", '" + author.getName() + "')";
-				statement.executeUpdate(sqlAuthorStatement);
-				
-				String sqlauthored = "Insert Into Szerezte Values ('" + book.getBookIDCode() + "', " + author.getAuthorIDCode() + ")";
-				statement.executeUpdate(sqlauthored);
-			}
 			MainController.getConnection().commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -100,55 +63,57 @@ public class AuthorController {
 
 	}
 
-	public void saveBooksToXML(String path) {
-		if((loadedBooks.isEmpty())) {
-			loadBookDataFromDB();
+	public void saveAuthorsToXML(String path) {
+		if((loadedAuthors.isEmpty())) {
+			loadAuthorDataFromDB();
 		}
 		
 		Document doc = XMLParser.createDocument();
-		Book.convertAndAppendBooks(loadedBooks, doc);
+		Author.convertAndAppendAuthors(doc, loadedAuthors);
 		XMLParser.saveDocument(doc, path);
 		
 	}
 	
-	public void loadBooksFromXML(String path) {
+	public void loadAuthorFromXML(String path) {
 		ArrayList<Element> eList = XMLParser.parseDocument(path);
 		
-		ArrayList<Book> importedBookList = Book.bookListFromElementList(eList);
+		ArrayList<Author> importedAuthorList = Author.authorListFromElementList(eList);
 		
-		if((loadedBooks.isEmpty())) {
-			loadBookDataFromDB();
+		if((loadedAuthors.isEmpty())) {
+			loadAuthorDataFromDB();
 		}
 		
-		//to avoid modifying the imported list of members as I am working on them in the loop, I am making a copy of them
-		ArrayList<Book> copyOfImportedBooksList = (ArrayList<Book>) importedBookList.clone();
+		//to avoid modifying the imported list of authors as I am working on them in the loop, I am making a copy of them
+		ArrayList<Author> copy = (ArrayList<Author>) loadedAuthors.clone();
 		
-		//in these nested loops, I check whether a book from the imported list is already in the loaded books from the db
+		//in these nested loops, I check whether a author from the imported list is already in the loaded authors from the db
 		//this is a very inefficient way of doing so though
-		//i remove all already existing books from the copy of the imported book list
-		for (Book book : importedBookList) {
-			for (Book loaded : loadedBooks) {
-				if(loaded.getBookIDCode().equals(book.getBookIDCode())) {
-					System.out.println("A következõ kódú könyv már be van töltve:" + book.getBookIDCode());
-					copyOfImportedBooksList.remove(book);
+		//i remove all already existing authors from the copy of the imported author list
+		for (Author author : importedAuthorList) {
+			for (Author loaded : loadedAuthors) {
+				if(loaded.getAuthorIDCode() == author.getAuthorIDCode()) {
+					System.out.println("A következõ kódú szerzõ már be van töltve:" + author.getAuthorIDCode());
+					
 				}
 			}
 		}
 		
 		//all remaining books in the copy shouldn't be violating the unique constraints of the "Konyvek" table, so they are safe to insert
-		for (Book book : copyOfImportedBooksList) {
-			System.out.println("Adatbázisba felvitt " + book.toString());
-			loadedBooks.add(book);
-			insertBookIntoDB(book);
+		for (Author author : copy) {
+			System.out.println("Adatbázisba felvitt " + author.toString());
+			loadedAuthors.add(author);
+			insertAuthorIntoDB(author);
 		}
 	}
-	
-	public static ArrayList<Book> getLoadedBooks() {
-		return loadedBooks;
+
+	public static ArrayList<Author> getLoadedAuthors() {
+		return loadedAuthors;
 	}
 
-	public static void setLoadedBooks(ArrayList<Book> loadedBooks) {
-		BookController.loadedBooks = loadedBooks;
+	public static void setLoadedAuthors(ArrayList<Author> loadedAuthors) {
+		AuthorController.loadedAuthors = loadedAuthors;
 	}
+	
+	
 	
 }

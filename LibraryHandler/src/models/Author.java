@@ -77,6 +77,23 @@ public class Author {
 		}
 	}
 	
+	public static void convertAndAppendAuthors(Document doc, ArrayList<Author> authors) {
+		Element authorsOfBook = doc.createElement("Szerzok");
+		doc.appendChild(authorsOfBook);
+		for (Author author : authors) {
+			Element authorElement = doc.createElement("Szerzo");
+			authorsOfBook.appendChild(authorElement);
+			
+			Element authorCodeElement = doc.createElement("SzKod");
+			authorCodeElement.setTextContent("" + author.authorIDCode);
+			authorElement.appendChild(authorCodeElement);
+			
+			Element authorNameElement = doc.createElement("Nev");
+			authorNameElement.setTextContent(author.name);
+			authorElement.appendChild(authorNameElement);
+		}
+	}
+	
 	public static ArrayList<Author> authorListFromElementList(ArrayList<Element> elementList) {
 		ArrayList<Author> returnlist = new ArrayList<>();
 		

@@ -100,42 +100,35 @@ public class MemberView {
 		
 		do {
 			System.out.println("Írd be melyik adatát szeretnéd módosítani:\n"
-			+ "1. Azonosító kód\n"
-			+ "2. Név\n"
-			+ "3. Születési dátum\n"
-			+ "4. Telefonszám\n"
-			+ "5. E-Mail Cím\n"
-			+ "6. Vissza");
+			+ "1. Név\n"
+			+ "2. Születési dátum\n"
+			+ "3. Telefonszám\n"
+			+ "4. E-Mail Cím\n"
+			+ "5. Vissza");
 			
-			int choice = ConsoleReader.readIntInRange(1, 6);
+			int choice = ConsoleReader.readIntInRange(1, 5);
 			switch (choice) {
 			case 1:
-				System.out.println("Add meg az új kódot:");
-				String id = ConsoleReader.readStringBetweenLength(5, 5);
-				toModify.setIdCode(id);
-				break;
-
-			case 2:
 				System.out.println("Add meg az új nevet");
 				String name = ConsoleReader.readString();
 				toModify.setName(name);
 				break;
-			case 3:
+			case 2:
 				System.out.println("Add meg az új születési dátumot:");
 				Date date = ConsoleReader.readSQLDate();
 				toModify.setDateOfBirth(date);
 				break;
-			case 4:
+			case 3:
 				System.out.println("Add meg az új telefonszámot");
 				String pnum = ConsoleReader.readString();
 				toModify.setPhoneNumber(pnum);
 				break;
-			case 5:
+			case 4:
 				System.out.println("Add meg az új E-Mail címet");
 				String email = ConsoleReader.readString();
 				toModify.setPhoneNumber(email);
 				break;
-			case 6:
+			case 5:
 				exit=true;
 			break;
 			default:
