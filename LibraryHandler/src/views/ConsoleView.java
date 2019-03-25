@@ -1,5 +1,10 @@
 package views;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import controllers.MainController;
 import iohandlers.*;
 
 public class ConsoleView {
@@ -49,9 +54,9 @@ public class ConsoleView {
 		boolean exit = false;
 		do {
 		System.out.println("A menürendszert a megfelelõ szám bevitelével navigálhatod:");
-		System.out.println("1. Tagok\n2. Könyvek\n3. Kölcsönzések\n4. Szerzõk\n5. Beállítások\n6. Kilépés");
+		System.out.println("1. Tagok\n2. Könyvek\n3. Kölcsönzések\n4. Szerzõk\n5. Statisztikák\n6. Beállítások\n7. Kilépés");
 		
-		int menu = ConsoleReader.readIntInRange(1, 6);
+		int menu = ConsoleReader.readIntInRange(1, 7);
 		
 		switch (menu) {
 		case 1:
@@ -71,9 +76,12 @@ public class ConsoleView {
 			break;
 			
 		case 5:
-			System.out.println("Ebben a verzióban a beállítások még nem elérhetõk!");
+			statisticsMenu();
 			break;
 		case 6:
+			System.out.println("Ebben a verzióban a beállítások még nem elérhetõk!");
+			break;
+		case 7:
 			exit = true;
 			break;
 
@@ -81,5 +89,18 @@ public class ConsoleView {
 			break;
 		}
 		}while(!exit);
+	}
+	
+	public void statisticsMenu() {
+		try {
+		Connection conn = MainController.getConnection();
+		CallableStatement callStat = conn.prepareCall("{call tagszam(?)}");
+		callStat.registerOutParameter(1, java.sql.Types.NUMERIC);
+		callStat.execute();
+		float count = callStat.getInt(1);
+		System.out.println("Tagok száma: " + count);
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }

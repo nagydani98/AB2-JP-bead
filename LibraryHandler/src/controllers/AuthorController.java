@@ -1,6 +1,7 @@
 package controllers;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,14 +39,22 @@ public class AuthorController {
 	
 	public void updateAuthorDataInDB(Author author) {
 		try {
-			statement = MainController.getConnection().createStatement();
-			sqlStatement = "Update Szerzo Set Nev = '" + author.getName() + "' Where SzKod = " + author.getAuthorIDCode();
+			sqlStatement = "Update Szerzo Set Nev = ? Where SzKod = ?";
 			statement.executeUpdate(sqlStatement);
-			
+			PreparedStatement prepStat = MainController.getConnection().prepareStatement(sqlStatement);
+			prepStat.setString(1, author.getName());
+			prepStat.setInt(2, author.getAuthorIDCode());
+			prepStat.execute();
 			MainController.getConnection().commit();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
+			try {
+				MainController.getConnection().rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				System.out.println(e1.getMessage());
+			}
 		}
 	}
 	

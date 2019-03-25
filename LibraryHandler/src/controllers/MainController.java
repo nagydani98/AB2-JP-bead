@@ -1,6 +1,7 @@
 package controllers;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import views.ConsoleView;
 
@@ -26,9 +27,16 @@ public class MainController {
 	
 	public static void operateInConsole(){
 		ConsoleView consoleView = new ConsoleView();
-		//String[] loginDetails = consoleView.requestLoginDetails(); //loginDetails[0] is the username and loginDetails[1] is the password
-		String[] loginDetails = {"System", "Guest123"};
+		String[] loginDetails = consoleView.requestLoginDetails(); //loginDetails[0] is the username and loginDetails[1] is the password
+		//String[] loginDetails = {"System", "Guest123"};
 		openConnection(loginDetails[0], loginDetails[1]);
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		initProcedures();
 		consoleView.mainConsoleMenu();
 		
 	}
@@ -53,7 +61,41 @@ public class MainController {
 		}
 	}
 
-	//data loading methods
+	//DB setup methods
+	public  static void listAllTAblesInLibraryDatabase() {
+		try {
+			DatabaseMetaData dmd = connection.getMetaData();
+		    ResultSet rs1 = dmd.getSchemas();
+		    while (rs1.next()) {
+		      String ss = rs1.getString(1);
+		      String[] types = {"TABLE"};
+		      ResultSet rs2 = dmd.getTables(null, ss, "%", types);
+		      while (rs2.next())
+		        System.out.println(rs2.getString(3) + " " + rs2.getString(4));
+		    }
+		    connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void initProcedures() {
+		String sqlProcedureMemberRowCounter = "create or replace procedure tagszam "
+				+ "(countNum OUT number) is" 
+				+ "begin "
+				+ "select count(*) into countNum from Tagok; "
+				+ "end;";
+		
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate(sqlProcedureMemberRowCounter);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	//getters and setters
 	public static Connection getConnection() {

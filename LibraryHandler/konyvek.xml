@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Konyvek>
+<Konyv>
+<KKod>111111111</KKod>
+<Cim>Piroska</Cim>
+<KiadasDatum>2017-12-17</KiadasDatum>
+<Statusz>2</Statusz>
+<ISBN/>
+<Szerzok>
+<Szerzo>
+<SzKod>1</SzKod>
+<Nev>Grimm fiv‚rek</Nev>
+</Szerzo>
+</Szerzok>
+</Konyv>
+<Konyv>
+<KKod>111111112</KKod>
+<Cim>Vuk</Cim>
+<KiadasDatum>2018-12-17</KiadasDatum>
+<Statusz>1</Statusz>
+<ISBN/>
+<Szerzok>
+<Szerzo>
+<SzKod>2</SzKod>
+<Nev>Feket Istv n</Nev>
+</Szerzo>
+</Szerzok>
+</Konyv>
+<Konyv>
+<KKod>111111113</KKod>
+<Cim>Rem‚ny Rabjai</Cim>
+<KiadasDatum>2013-12-10</KiadasDatum>
+<Statusz>2</Statusz>
+<ISBN/>
+<Szerzok>
+<Szerzo>
+<SzKod>3</SzKod>
+<Nev>Stephen King</Nev>
+</Szerzo>
+</Szerzok>
+</Konyv>
+<Konyv>
+<KKod>111111114</KKod>
+<Cim>Pantonim 101</Cim>
+<KiadasDatum>2017-06-17</KiadasDatum>
+<Statusz>0</Statusz>
+<ISBN/>
+<Szerzok>
+<Szerzo>
+<SzKod>4</SzKod>
+<Nev>Albert Robaport</Nev>
+</Szerzo>
+</Szerzok>
+</Konyv>
+<Konyv>
+<KKod>111111115</KKod>
+<Cim>Algebra</Cim>
+<KiadasDatum>2001-12-01</KiadasDatum>
+<Statusz>2</Statusz>
+<ISBN/>
+<Szerzok>
+<Szerzo>
+<SzKod>8</SzKod>
+<Nev>Dózsai György</Nev>
+</Szerzo>
+<Szerzo>
+<SzKod>8</SzKod>
+<Nev>Dózsai György</Nev>
+</Szerzo>
+</Szerzok>
+</Konyv>
+<Konyv>
+<KKod>111111116</KKod>
+<Cim>Piroska</Cim>
+<KiadasDatum>2017-12-17</KiadasDatum>
+<Statusz>1</Statusz>
+<ISBN/>
+<Szerzok/>
+</Konyv>
+</Konyvek>
