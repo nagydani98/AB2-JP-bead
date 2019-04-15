@@ -3,7 +3,8 @@ package controllers;
 import java.sql.*;
 import java.util.ArrayList;
 
-import views.ConsoleView;
+import views.consoleviews.ConsoleView;
+import views.windowviews.AppView;
 
 public class MainController {
 	private static Connection connection;
@@ -21,7 +22,7 @@ public class MainController {
 		}
 		
 		else {
-			//TODO
+			operateInGUI();
 		}
 	}
 	
@@ -39,6 +40,11 @@ public class MainController {
 		initProcedures();
 		consoleView.mainConsoleMenu();
 		
+	}
+	
+	public static void operateInGUI(){
+		AppView appView = new AppView();
+		appView.setVisible(true);
 	}
 	
 	public static void openConnection(String username, String password) {
