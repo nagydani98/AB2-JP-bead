@@ -11,10 +11,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import controllers.MainController;
+import controllers.MemberController;
 import models.GenericTableModel;
+import models.Member;
+import views.windowviews.utilitydialogs.DBLoginDialog;
 
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -23,13 +28,19 @@ public class MemberDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTable memberTable;
-	private GenericTableModel dialogTableModel;
+	private static GenericTableModel dialogTableModel;
+	private static MemberController memberController;
 
 	/**
 	 * Create the dialog.
 	 */
 	public MemberDialog(JFrame owner) {
 		super(owner, "Tagok", true);
+		
+		memberController = new MemberController();
+		Object[] fieldNames = {" ","Kód", "Név", "Születési Idõ", "E-Mail Cím", "Telefonszám"}; 
+		dialogTableModel = new GenericTableModel(fieldNames, 0);
+		
 		setBounds(100, 100, 800, 520);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -46,6 +57,14 @@ public class MemberDialog extends JDialog {
 		loadPanel.add(lblLoadTitle);
 		
 		JButton btnLoadFromDB = new JButton("Adatb\u00E1zisb\u00F3l");
+		btnLoadFromDB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DBLoginDialog login = new DBLoginDialog(MemberDialog.this);
+				login.setVisible(true);
+				MemberDialog.memberController.loadMemberDataFromDB();
+				Member.convertAndAppendMembers(MemberController.getLoadedMembers(), dialogTableModel);
+			}
+		});
 		btnLoadFromDB.setBounds(10, 36, 130, 23);
 		loadPanel.add(btnLoadFromDB);
 		
@@ -88,7 +107,7 @@ public class MemberDialog extends JDialog {
 		TableColumn tc = null;
 		for (int i = 0; i < 6; i++) {
 			tc = memberTable.getColumnModel().getColumn(i);
-			if(i==0 || i==1 || i==5){
+			if(i==0 || i==1){
 				tc.setPreferredWidth(30);
 			}
 			else{
@@ -100,7 +119,27 @@ public class MemberDialog extends JDialog {
 		TableRowSorter<GenericTableModel> trs = (TableRowSorter<GenericTableModel>)memberTable.getRowSorter();
 		trs.setSortable(0, false);
 		
+		memberTableScrollPane.add(memberTable);
+		
 		memberTableScrollPane.setViewportView(memberTable);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	}
+
+	public JTable getMemberTable() {
+		return memberTable;
+	}
+
+	public void setMemberTable(JTable memberTable) {
+		this.memberTable = memberTable;
+	}
+
+	public MemberController getMemberController() {
+		return memberController;
+	}
+
+	public void setMemberController(MemberController memberController) {
+		this.memberController = memberController;
+	}
+	
+	
 }

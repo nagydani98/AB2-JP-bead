@@ -1,5 +1,6 @@
 package controllers;
 
+import java.awt.EventQueue;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -43,18 +44,28 @@ public class MainController {
 	}
 	
 	public static void operateInGUI(){
-		AppView appView = new AppView();
-		appView.setVisible(true);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					AppView frame = new AppView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
-	public static void openConnection(String username, String password) {
+	public static boolean openConnection(String username, String password) {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			String url = "jdbc:oracle:thin:@localhost:1521:XE";
 			connection = DriverManager.getConnection(url, username, password);
 			System.out.println("Connection established");
+			return true;
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
+			return false;
 		}
 	}
 	

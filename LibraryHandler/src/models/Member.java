@@ -163,6 +163,13 @@ public class Member {
 		root.appendChild(membersRootElement);
 	}
 	
+	public static void convertAndAppendMembers(ArrayList<Member> members, GenericTableModel mtm) {
+		for (Member member : members) {
+			mtm.addRow(new Object[]{new Boolean(false), 
+					member.getIdCode(), member.getName(), member.getDateOfBirth(), member.geteMail(), member.getPhoneNumber()});
+		}
+	}
+	
 	public String getIdCode() {
 		return memberIDCode;
 	}

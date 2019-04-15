@@ -1218,8 +1218,7 @@
 							},
 							"name": "Státusz",
 							"documentation": "0 a selejtesnek, 1 a szabadnak, és 2 a kölcsönzöttnek",
-							"type": "SMALLINT",
-							"length": "1"
+							"type": "INTEGER"
 						},
 						{
 							"_type": "ERDColumn",
@@ -1288,8 +1287,7 @@
 								"$ref": "AAAAAAFphr4/Ano6N/I="
 							},
 							"name": "Szkód",
-							"type": "SMALLINT",
-							"length": "4",
+							"type": "INTEGER",
 							"foreignKey": true
 						}
 					]
@@ -1309,8 +1307,7 @@
 								"$ref": "AAAAAAFphr+RJXpxMRI="
 							},
 							"name": "Szkód",
-							"type": "SMALLINT",
-							"length": "4",
+							"type": "INTEGER",
 							"primaryKey": true
 						},
 						{
