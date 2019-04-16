@@ -11,18 +11,21 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import controllers.MainController;
 import controllers.MemberController;
 import models.GenericTableModel;
 import models.Member;
 import views.windowviews.utilitydialogs.DBLoginDialog;
+import views.windowviews.utilitydialogs.FileSelectorDialog;
 
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.FileDialog;
 
 public class MemberDialog extends JDialog {
 
@@ -48,7 +51,7 @@ public class MemberDialog extends JDialog {
 		contentPanel.setLayout(null);
 		
 		JPanel loadPanel = new JPanel();
-		loadPanel.setBounds(10, 11, 200, 120);
+		loadPanel.setBounds(10, 11, 200, 150);
 		contentPanel.add(loadPanel);
 		loadPanel.setLayout(null);
 		
@@ -61,20 +64,68 @@ public class MemberDialog extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				DBLoginDialog login = new DBLoginDialog(MemberDialog.this);
 				login.setVisible(true);
-				MemberDialog.memberController.loadMemberDataFromDB();
-				Member.convertAndAppendMembers(MemberController.getLoadedMembers(), dialogTableModel);
+				if(login.isSuccessfulLogin()){
+					MemberDialog.memberController.loadMemberDataFromDB();
+					Member.convertAndAppendMembers(MemberController.getLoadedMembers(), dialogTableModel);
+					login.dispose();
+				}
 			}
 		});
 		btnLoadFromDB.setBounds(10, 36, 130, 23);
 		loadPanel.add(btnLoadFromDB);
 		
+		//file format selector panel
+		JPanel formatSelectorPanel = new JPanel();
+		formatSelectorPanel.setBounds(10, 100, 130, 50);
+		loadPanel.add(formatSelectorPanel);
+		formatSelectorPanel.setLayout(null);
+		formatSelectorPanel.setVisible(false);
+		
+		JComboBox<String> fileFormatComboBox = new JComboBox();
+		fileFormatComboBox.setBackground(Color.WHITE);
+		fileFormatComboBox.setBounds(0, 0, 130, 20);
+		formatSelectorPanel.add(fileFormatComboBox);
+		for(String formatitem : MemberController.availableFileFormats){
+			fileFormatComboBox.addItem(formatitem);
+		}
+		
+		JButton btnFormatOk = new JButton("OK");
+		btnFormatOk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FileSelectorDialog fileDialog = new FileSelectorDialog(
+						MemberDialog.this, 
+						"Fájl Megnyitása", 
+						FileDialog.LOAD, 
+						(String)fileFormatComboBox.getSelectedItem());
+			}
+		});
+		btnFormatOk.setBounds(0, 27, 50, 23);
+		formatSelectorPanel.add(btnFormatOk);
+		btnFormatOk.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnFormatOk.setActionCommand("OK");
+		
+		JButton btnFormatSelectionCancel = new JButton("Cancel");
+		btnFormatSelectionCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				formatSelectorPanel.setVisible(false);
+			}
+		});
+		btnFormatSelectionCancel.setActionCommand("Cancel");
+		btnFormatSelectionCancel.setBounds(55, 27, 75, 23);
+		formatSelectorPanel.add(btnFormatSelectionCancel);
+		
 		JButton btnLoadFromFile = new JButton("F\u00E1jlb\u00F3l");
+		btnLoadFromFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				formatSelectorPanel.setVisible(true);
+			}
+		});
 		btnLoadFromFile.setBounds(10, 70, 130, 23);
 		loadPanel.add(btnLoadFromFile);
 		
 		JPanel exportPanel = new JPanel();
 		exportPanel.setLayout(null);
-		exportPanel.setBounds(10, 142, 200, 120);
+		exportPanel.setBounds(10, 176, 200, 150);
 		contentPanel.add(exportPanel);
 		
 		JLabel lblExportTitle = new JLabel("Tagok export\u00E1l\u00E1sa");
@@ -125,6 +176,7 @@ public class MemberDialog extends JDialog {
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	}
 
+
 	public JTable getMemberTable() {
 		return memberTable;
 	}
@@ -140,6 +192,4 @@ public class MemberDialog extends JDialog {
 	public void setMemberController(MemberController memberController) {
 		this.memberController = memberController;
 	}
-	
-	
 }

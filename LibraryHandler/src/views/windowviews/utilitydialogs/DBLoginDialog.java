@@ -23,6 +23,7 @@ public class DBLoginDialog extends JDialog {
 	private JTextField txtJdbcoraclethinlocalhostxe;
 	private JTextField txtUsr;
 	private JTextField txtPswd;
+	private boolean successfulLogin = false;
 
 	/**
 	 * Create the dialog.
@@ -74,7 +75,8 @@ public class DBLoginDialog extends JDialog {
 				String pswd = txtPswd.getText();
 				System.out.println(user + pswd);
 				if(MainController.openConnection(user, pswd)) {
-					dispose();
+					successfulLogin = true;
+					setVisible(false);
 				}
 			}
 		});
@@ -91,4 +93,14 @@ public class DBLoginDialog extends JDialog {
 		contentPanel.add(btnMgse);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	}
+
+	public boolean isSuccessfulLogin() {
+		return successfulLogin;
+	}
+
+	public void setSuccessfulLogin(boolean successfulLogin) {
+		this.successfulLogin = successfulLogin;
+	}
+	
+	
 }

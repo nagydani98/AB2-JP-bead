@@ -8,7 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class OpenFileDialog extends JDialog {
+public class fdlo extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
@@ -17,7 +17,7 @@ public class OpenFileDialog extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			OpenFileDialog dialog = new OpenFileDialog();
+			fdlo dialog = new fdlo();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -28,7 +28,7 @@ public class OpenFileDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public OpenFileDialog() {
+	public fdlo() {
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());

@@ -1,5 +1,6 @@
 package controllers;
 
+import java.awt.FileDialog;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -17,6 +18,8 @@ public class MemberController {
 	private static ArrayList<Member> loadedMembers = new ArrayList<>();
 	private static Statement statement; 
 	private static String sqlStatement;
+	//TODO possibly replace with enum
+	public static final String[] availableFileFormats = {"CSV", "Custom Text File", "XML", "JSON"};
 	
 	public MemberController() {
 		// TODO Auto-generated constructor stub
@@ -132,6 +135,10 @@ public class MemberController {
 			loadedMembers.add(member);
 			insertMemberIntoDB(member);
 		}
+	}
+	
+	public void loadMembersFromFile(FileDialog selector){
+		
 	}
 	
 	public static ArrayList<Member> getLoadedMembers() {
