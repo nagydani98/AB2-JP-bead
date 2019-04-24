@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -49,7 +51,7 @@ public class AppView extends JFrame {
 		JButton btnBooks = new JButton("K\u00F6nyvek");
 		btnBooks.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				bookDialog = new BookDialog();
+				bookDialog = new BookDialog(AppView.this);
 				bookDialog.setVisible(true);
 			}
 		});
@@ -112,5 +114,9 @@ public class AppView extends JFrame {
 		}
 		
 		return image;
+	}
+	
+	public static void showMD(String s, int i){
+		JOptionPane.showMessageDialog(null, s, "Figyelem!", i);
 	}
 }

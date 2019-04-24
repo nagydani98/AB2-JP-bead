@@ -7,19 +7,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import iohandlers.TextFileHandler;
 import iohandlers.XMLParser;
+import models.GenericTableModel;
 import models.Member;
+import views.windowviews.utilitydialogs.FileSelectorDialog;
 
 public class MemberController {
 	private static ArrayList<Member> loadedMembers = new ArrayList<>();
 	private static Statement statement; 
 	private static String sqlStatement;
 	//TODO possibly replace with enum
-	public static final String[] availableFileFormats = {"CSV", "Custom Text File", "XML", "JSON"};
 	
 	public MemberController() {
 		// TODO Auto-generated constructor stub
@@ -137,8 +140,109 @@ public class MemberController {
 		}
 	}
 	
-	public void loadMembersFromFile(FileDialog selector){
+	public void loadMembersFromFile(FileSelectorDialog selector){
 		
+		if((selector.getFile()) != null) {
+			
+			if(MainController.availableFileFormatStrings[0].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Member mem = Member.memberFromCSVString(string);
+					for (Member member : MemberController.getLoadedMembers()) {
+						if(member.getIdCode().equals(mem.getIdCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						MemberController.getLoadedMembers().add(mem);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[1].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Member mem = Member.memberFromFileString(string, "" + selector.getColumnDivider());
+					for (Member member : MemberController.getLoadedMembers()) {
+						if(member.getIdCode().equals(mem.getIdCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						MemberController.getLoadedMembers().add(mem);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[2].equals(selector.getSelectedFormat())) {
+				
+				ArrayList<Element> eList = XMLParser.parseDocument(selector.getFile());
+				
+				ArrayList<Member> importedMemberList = Member.memberListFromElementList(eList);
+				
+				ArrayList<Member> copyOfImportedMemberList = (ArrayList<Member>) importedMemberList.clone();
+				
+				//in these nested loops, I check whether a member from the imported list is already in the loaded members from the db
+				//this is a very inefficient way of doing so though
+				//i remove all already existing members from the copy of the imported member list
+				for (Member member : importedMemberList) {
+					for (Member loaded : loadedMembers) {
+						if(loaded.getIdCode().equals(member.getIdCode())) {
+							copyOfImportedMemberList.remove(member);
+						}
+						else if(loaded.geteMail().equals(member.geteMail())) {
+							copyOfImportedMemberList.remove(member);
+						}
+						else if(loaded.getPhoneNumber().equals(member.getPhoneNumber())) {
+							copyOfImportedMemberList.remove(member);
+						}
+					}
+				}
+				
+				//all remaining members in the copy shouldn't be violating the unique constraints of the "Tagok" table, so they are safe to insert
+				for (Member member : copyOfImportedMemberList) {
+					loadedMembers.add(member);
+				
+			}
+			}
+			if(MainController.availableFileFormatStrings[3].equals(selector.getSelectedFormat())) {
+				
+			}
+		}
+	}
+	
+	public void exportMembersToFile(FileSelectorDialog selector, GenericTableModel memberTableModel) {
+		ArrayList<Member> membersToExport = Member.convertMTM(memberTableModel);
+		
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[0])){
+			String path =  selector.getDirectory() + selector.getFile() + ".csv";
+			
+			ArrayList<String> csvLines = new ArrayList<>();
+			for (Member member : membersToExport) {
+				csvLines.add(member.toCSVString());
+			}
+			TextFileHandler.writeTxtFile(csvLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[1])){
+			String path =  selector.getDirectory() + selector.getFile() + ".fish";
+			
+			ArrayList<String> fileLines = new ArrayList<>();
+			for (Member member : membersToExport) {
+				fileLines.add(member.toFileString("" + selector.getColumnDivider()) + "\n");
+			}
+			TextFileHandler.writeTxtFile(fileLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[2])){
+			String path =  selector.getDirectory() + selector.getFile() + ".xml";
+			Document doc = XMLParser.createDocument();
+			Member.convertAndAppendMembers(membersToExport, doc);
+			XMLParser.saveDocument(doc, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[3])){
+	
+		}
 	}
 	
 	public static ArrayList<Member> getLoadedMembers() {

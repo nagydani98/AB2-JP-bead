@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import iohandlers.TextFileHandler;
 import iohandlers.XMLParser;
 import models.Author;
 import models.Book;
+import models.GenericTableModel;
 import models.Member;
+import views.windowviews.utilitydialogs.FileSelectorDialog;
 
 public class BookController {
 	public static ArrayList<Book> loadedBooks = new ArrayList<>();
@@ -155,6 +158,105 @@ public class BookController {
 			System.out.println("Adatbázisba felvitt " + book.toString());
 			loadedBooks.add(book);
 			insertBookIntoDB(book);
+		}
+	}
+	
+	public void loadBooksFromFile(FileSelectorDialog selector){
+		
+		if((selector.getFile()) != null) {
+			
+			if(MainController.availableFileFormatStrings[0].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Book newbook = Book.bookFromCSVString(string);
+					for (Book book : loadedBooks) {
+						if(book.getBookIDCode().equals(newbook.getBookIDCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						BookController.getLoadedBooks().add(newbook);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[1].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Book newbook = Book.bookFromFileString(string, "" + selector.getColumnDivider());
+					for (Book book : loadedBooks) {
+						if(book.getBookIDCode().equals(newbook.getBookIDCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						BookController.getLoadedBooks().add(newbook);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[2].equals(selector.getSelectedFormat())) {
+				
+				ArrayList<Element> eList = XMLParser.parseDocument(selector.getFile());
+				
+				ArrayList<Book> importedBookList = BookController.getLoadedBooks();
+				
+				ArrayList<Book> copyOfImportedBooksList = (ArrayList<Book>) importedBookList.clone();
+				
+				//in these nested loops, I check whether a book from the imported list is already in the loaded books from the db
+				//this is a very inefficient way of doing so though
+				//i remove all already existing books from the copy of the imported book list
+				for (Book book : importedBookList) {
+					for (Book loaded : loadedBooks) {
+						if(loaded.getBookIDCode().equals(book.getBookIDCode())) {
+							System.out.println("A következõ kódú könyv már be van töltve:" + book.getBookIDCode());
+							copyOfImportedBooksList.remove(book);
+						}
+					}
+				}
+				
+				//all remaining books in the copy shouldn't be violating the unique constraints of the "Konyvek" table, so they are safe to insert
+				for (Book book : copyOfImportedBooksList) {
+					loadedBooks.add(book);
+				}
+			}
+			if(MainController.availableFileFormatStrings[3].equals(selector.getSelectedFormat())) {
+				
+			}
+		}
+	}
+	
+	public void exportBooksToFile(FileSelectorDialog selector, GenericTableModel bookTableModel) {
+		ArrayList<Book> booksToExport = Book.convertMTM(bookTableModel); 
+		
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[0])){
+			String path =  selector.getDirectory() + selector.getFile() + ".csv";
+			
+			ArrayList<String> csvLines = new ArrayList<>();
+			for (Book book : booksToExport) {
+				csvLines.add(book.toCSVString());
+			}
+			TextFileHandler.writeTxtFile(csvLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[1])){
+			String path =  selector.getDirectory() + selector.getFile() + ".fish";
+			
+			ArrayList<String> fileLines = new ArrayList<>();
+			for (Book book : booksToExport) {
+				fileLines.add(book.toFileString("" + selector.getColumnDivider()));
+			}
+			TextFileHandler.writeTxtFile(fileLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[2])){
+			String path =  selector.getDirectory() + selector.getFile() + ".xml";
+			Document doc = XMLParser.createDocument();
+			Book.convertAndAppendBooks(booksToExport, doc);
+			XMLParser.saveDocument(doc, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[3])){
+	
 		}
 	}
 	

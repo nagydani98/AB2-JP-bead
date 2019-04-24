@@ -3,16 +3,22 @@ package models;
 import javax.swing.table.DefaultTableModel;
 
 public class GenericTableModel extends DefaultTableModel{
+	private boolean editable = false;
 	
 	public GenericTableModel(Object fildNames[], int rows){
 		super(fildNames, rows);
 	}
 	
 	public boolean isCellEditable(int row, int col){
-		if(col == 0) {
+		if(editable) {
 			return true;
 		}
-		return false;
+		else {
+			if(col == 0) {
+					return true;
+			}
+			return false;
+		}
 	}
 	
 	public Class<?> getColumnClass(int index){
@@ -24,4 +30,14 @@ public class GenericTableModel extends DefaultTableModel{
 		}
 		else return (String.class);
 	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+	
+	
 }

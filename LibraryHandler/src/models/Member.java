@@ -170,6 +170,22 @@ public class Member {
 		}
 	}
 	
+	public static ArrayList<Member> convertMTM(GenericTableModel mtm) {
+		ArrayList<Member> out = new ArrayList<>();
+		for (int i = 0; i < mtm.getRowCount(); i++) {
+				String id = (String) mtm.getValueAt(i, 1);
+				String name = (String) mtm.getValueAt(i, 2);
+				Date date = (Date) mtm.getValueAt(i, 3);
+				String mail = (String) mtm.getValueAt(i, 4);
+				String phone = (String) mtm.getValueAt(i, 5);
+				
+				out.add(new Member(id, name, mail, phone, date));
+		}
+		
+		return out;
+	}
+	
+	
 	public String getIdCode() {
 		return memberIDCode;
 	}

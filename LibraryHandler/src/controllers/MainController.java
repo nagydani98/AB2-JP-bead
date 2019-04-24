@@ -10,6 +10,7 @@ import views.windowviews.AppView;
 public class MainController {
 	private static Connection connection;
 	private static Statement statement;
+	public static final String[] availableFileFormatStrings = {"CSV", "Custom Text File", "XML", "JSON"};
 	
 	public MainController() {
 		//Default constructor, will eventually open the GUI by default
@@ -76,6 +77,13 @@ public class MainController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static boolean isConnectionOpen() {
+			if(connection != null) {
+				return true;
+			}
+			else return false;
 	}
 
 	//DB setup methods

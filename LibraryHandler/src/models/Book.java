@@ -147,12 +147,14 @@ public class Book {
 			isbnElement.setTextContent(book.ISBN);
 			bookElement.appendChild(isbnElement);
 			
-			Element authorsElement = root.createElement("Szerzok");
+			if(book.authors != null && !book.authors.isEmpty()) {
+				Element authorsElement = root.createElement("Szerzok");
 			
-			Author.convertAndAppendAuthors(authorsElement, root, book.authors);
-			bookElement.appendChild(authorsElement);
+				Author.convertAndAppendAuthors(authorsElement, root, book.authors);
+				bookElement.appendChild(authorsElement);
 			
-			booksRootElement.appendChild(bookElement);
+				booksRootElement.appendChild(bookElement);
+			}
 			}
 		root.appendChild(booksRootElement);
 	}
@@ -210,6 +212,29 @@ public class Book {
 		
 			}
 		return returnlist;
+	}
+	
+	public static void convertAndAppendBooks(ArrayList<Book> books, GenericTableModel mtm) {
+		for (Book book : books) {
+			mtm.addRow(new Object[]{new Boolean(false), 
+					book.bookIDCode, book.title, book.dateOfRelease, book.status, book.ISBN});
+		}
+	}
+	
+	public static ArrayList<Book> convertMTM(GenericTableModel mtm) {
+		ArrayList<Book> out = new ArrayList<>();
+		for (int i = 0; i < mtm.getRowCount(); i++) {
+				Book book = new Book();
+				book.bookIDCode = (String) mtm.getValueAt(i, 1);
+				book.title = (String) mtm.getValueAt(i, 2);
+				book.dateOfRelease = (Date) mtm.getValueAt(i, 3);
+				book.status = (int) mtm.getValueAt(i, 4);
+				book.ISBN= (String) mtm.getValueAt(i, 5);
+				
+				out.add(book);
+		}
+		
+		return out;
 	}
 	
 	public String getBookIDCode() {
