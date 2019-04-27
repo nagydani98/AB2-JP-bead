@@ -61,7 +61,7 @@ public class AppView extends JFrame {
 		JButton btnLends = new JButton("K\u00F6lcs\u00F6nz\u00E9sek");
 		btnLends.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				lendDialog = new LendDialog();
+				lendDialog = new LendDialog(AppView.this);
 				lendDialog.setVisible(true);
 			}
 		});
@@ -71,7 +71,7 @@ public class AppView extends JFrame {
 		JButton btnAuthors = new JButton("Szerz\u0151k");
 		btnAuthors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				authorDialog = new AuthorDialog();
+				authorDialog = new AuthorDialog(AppView.this);
 				authorDialog.setVisible(true);
 			}
 		});

@@ -123,6 +123,11 @@ public class NewBookDialog extends JDialog {
 				
 				if((code != null) && (title != null) && (releasedate != null) && (status != 42) && (isbn != null)) {
 					Book bok = new Book();
+					bok.setBookIDCode(code);
+					bok.setTitle(title);
+					bok.setDateOfRelease(releasedate);
+					bok.setStatus(status);
+					bok.setISBN(isbn);
 					System.out.println(bok.toString());
 					BookController.getLoadedBooks().add(bok);
 					successful = true;

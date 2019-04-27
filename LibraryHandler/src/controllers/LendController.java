@@ -9,9 +9,13 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import iohandlers.TextFileHandler;
 import iohandlers.XMLParser;
 import models.Author;
+import models.GenericTableModel;
 import models.Lend;
+import models.Member;
+import views.windowviews.utilitydialogs.FileSelectorDialog;
 
 public class LendController {
 	private static ArrayList<Lend> loadedLends = new ArrayList<>();
@@ -111,6 +115,101 @@ public class LendController {
 			System.out.println("Adatbázisba felvitt " + lend.toString());
 			loadedLends.add(lend);
 			insertIntoIntoDB(lend);
+		}
+	}
+	
+	public void loadLendsFromFile(FileSelectorDialog selector){
+		
+		if((selector.getFile()) != null) {
+			
+			if(MainController.availableFileFormatStrings[0].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Lend lend = Lend.lendFromCSVString(string);
+					for (Lend loaded : LendController.getLoadedLends()) {
+						if(loaded.getMemberIDCode().equals(lend.getMemberIDCode()) && loaded.getBookIDCode().equals(loaded.getBookIDCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						LendController.getLoadedLends().add(lend);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[1].equals(selector.getSelectedFormat())) {
+				boolean alreadyExists = false;
+				ArrayList<String> read = TextFileHandler.loadTxtFile(selector.getFile());
+				for (String string : read) {
+					Lend lend = Lend.lendFromFileString(string, "" + selector.getColumnDivider());
+					for (Lend loaded : LendController.getLoadedLends()) {
+						if(loaded.getMemberIDCode().equals(lend.getMemberIDCode()) && loaded.getBookIDCode().equals(loaded.getBookIDCode())) {
+							alreadyExists = true;
+						}
+					}
+					
+					if(!alreadyExists) {
+						LendController.getLoadedLends().add(lend);
+					}
+				}
+			}
+			if(MainController.availableFileFormatStrings[2].equals(selector.getSelectedFormat())) {
+				
+				ArrayList<Element> eList = XMLParser.parseDocument(selector.getFile());
+				
+				ArrayList<Lend> importedLends = new ArrayList<>();
+				
+				ArrayList<Lend> copy = (ArrayList<Lend>) loadedLends.clone();
+				
+				for (Lend lend : importedLends) {
+					for (Lend loaded : loadedLends) {
+						if(loaded.getMemberIDCode().equals(lend.getMemberIDCode()) && loaded.getBookIDCode().equals(loaded.getBookIDCode())) {
+							System.out.println("A következõ kölcsönzés már be van töltve:" + lend.toString());
+							
+						}
+					}
+				}
+				
+				for (Lend lend : copy) {
+					loadedLends.add(lend);
+				}
+			}
+			if(MainController.availableFileFormatStrings[3].equals(selector.getSelectedFormat())) {
+				
+			}
+		}
+	}
+	
+	public void exportLendsToFile(FileSelectorDialog selector, GenericTableModel lendTableModel) {
+		ArrayList<Lend> lendsToExport = Lend.convertMTM(lendTableModel);
+		
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[0])){
+			String path =  selector.getDirectory() + selector.getFile() + ".csv";
+			
+			ArrayList<String> csvLines = new ArrayList<>();
+			for (Lend lend : loadedLends) {
+				csvLines.add(lend.toCSVString());
+			}
+			TextFileHandler.writeTxtFile(csvLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[1])){
+			String path =  selector.getDirectory() + selector.getFile() + ".fish";
+			
+			ArrayList<String> fileLines = new ArrayList<>();
+			for (Lend lend : loadedLends) {
+				fileLines.add(lend.toFileString("" + selector.getColumnDivider()) + "\n");
+			}
+			TextFileHandler.writeTxtFile(fileLines, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[2])){
+			String path =  selector.getDirectory() + selector.getFile() + ".xml";
+			Document doc = XMLParser.createDocument();
+			Lend.convertAndAppendLends(lendsToExport, doc);
+			XMLParser.saveDocument(doc, path);
+		}
+		if(selector.getSelectedFormat().equals(MainController.availableFileFormatStrings[3])){
+	
 		}
 	}
 

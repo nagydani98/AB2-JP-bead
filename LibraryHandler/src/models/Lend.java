@@ -147,6 +147,28 @@ public class Lend {
 		return returnlist;
 	}
 	
+	public static void convertAndAppendLends(ArrayList<Lend> lends, GenericTableModel mtm) {
+		for (Lend lend : lends) {
+			mtm.addRow(new Object[]{new Boolean(false), 
+					lend.memberIDCode, lend.bookIDCode, lend.startOfLend, lend.endOfLend});
+		}
+	}
+	
+	public static ArrayList<Lend> convertMTM(GenericTableModel mtm) {
+		ArrayList<Lend> out = new ArrayList<>();
+		for (int i = 0; i < mtm.getRowCount(); i++) {
+				Lend lend = new Lend();
+				lend.memberIDCode = (String) mtm.getValueAt(i, 1);
+				lend.bookIDCode = (String) mtm.getValueAt(i, 2);
+				lend.startOfLend = (Date) mtm.getValueAt(i, 3);
+				lend.endOfLend = (Date) mtm.getValueAt(i, 4);
+				
+				out.add(lend);
+		}
+		
+		return out;
+	}
+	
 	public String getMemberIDCode() {
 		return memberIDCode;
 	}

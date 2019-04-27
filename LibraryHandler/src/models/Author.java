@@ -125,6 +125,26 @@ public class Author {
 			}
 		return returnlist;
 	}
+	
+	public static void convertAndAppendAuthorss(ArrayList<Author> authors, GenericTableModel mtm) {
+		for (Author author : authors) {
+			mtm.addRow(new Object[]{new Boolean(false), 
+					author.authorIDCode, author.name});
+		}
+	}
+	
+	public static ArrayList<Author> convertMTM(GenericTableModel mtm) {
+		ArrayList<Author> out = new ArrayList<>();
+		for (int i = 0; i < mtm.getRowCount(); i++) {
+				Author author = new Author();
+				author.authorIDCode = (int) mtm.getValueAt(i, 1);
+				author.name = (String) mtm.getValueAt(i, 2);
+				
+				out.add(author);
+		}
+		
+		return out;
+	}
 
 	public String getName() {
 		return name;
