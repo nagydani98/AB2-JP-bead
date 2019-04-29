@@ -43,7 +43,6 @@ public class DBLoginDialog extends JDialog {
 		txtJdbcoraclethinlocalhostxe = new JTextField();
 		txtJdbcoraclethinlocalhostxe.setText("jdbc:oracle:thin:@localhost:1521:XE");
 		txtJdbcoraclethinlocalhostxe.setHorizontalAlignment(SwingConstants.CENTER);
-		txtJdbcoraclethinlocalhostxe.setEditable(false);
 		txtJdbcoraclethinlocalhostxe.setBounds(100, 8, 300, 20);
 		contentPanel.add(txtJdbcoraclethinlocalhostxe);
 		txtJdbcoraclethinlocalhostxe.setColumns(10);

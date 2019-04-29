@@ -13,7 +13,8 @@ public class MainController {
 	public static final String[] availableFileFormatStrings = {"CSV", "Custom Text File", "XML", "JSON"};
 	
 	public MainController() {
-		//Default constructor, will eventually open the GUI by default
+		//Default constructor, opens the GUI by default
+		operateInGUI();
 	}
 	
 	public MainController(boolean operateInConsole) {
@@ -61,6 +62,18 @@ public class MainController {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			String url = "jdbc:oracle:thin:@localhost:1521:XE";
+			connection = DriverManager.getConnection(url, username, password);
+			System.out.println("Connection established");
+			return true;
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage());
+			return false;
+		}
+	}
+	
+	public static boolean openConnection(String url, String username, String password) {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
 			connection = DriverManager.getConnection(url, username, password);
 			System.out.println("Connection established");
 			return true;
